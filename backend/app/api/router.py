@@ -19,6 +19,9 @@ from app.services.rail_engine import Segment, first_fit
 
 api_router = APIRouter()
 
+# 取件申报衣长与工单衣长的允许误差（厘米，含边界）
+LENGTH_TOLERANCE_CM = 0.5
+
 
 @api_router.get("/health")
 def health():
@@ -112,6 +115,8 @@ def pickup(body: PickupRequest, db: Session = Depends(get_db)):
         raise HTTPException(404, "取件码无效")
     if order.status != "hung":
         raise HTTPException(400, "工单未在挂杆上")
+    if abs(body.declared_length_cm - order.length_cm) > LENGTH_TOLERANCE_CM:
+        raise HTTPException(400, f"衣长不符：申报 {body.declared_length_cm:g}cm，工单 {order.length_cm:g}cm")
     placements = db.scalars(
         select(RailPlacement).where(RailPlacement.order_id == order.id, RailPlacement.active == 1)
     ).all()

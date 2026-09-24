@@ -278,3 +278,9 @@ button {
   display: flex; align-items: center; justify-content: center;
   padding: 0 4px; overflow: hidden; white-space: nowrap;
 }
+.seg-row {
+  display: flex; gap: 1rem; align-items: center;
+  padding: .4rem .6rem; border: 1px solid var(--line); border-radius: 4px;
+  margin-bottom: .4rem; font-size: .9rem;
+}
+.seg-row .mono { min-width: 6rem; color: var(--hang-muted); }

@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class StoreOut(BaseModel):
@@ -35,6 +35,7 @@ class HangRequest(BaseModel):
 
 class PickupRequest(BaseModel):
     ticket_code: str
+    declared_length_cm: float = Field(gt=0)
 
 
 class OccupancySeg(BaseModel):
