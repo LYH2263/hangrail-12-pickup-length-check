@@ -35,6 +35,7 @@ class HangRequest(BaseModel):
 
 class PickupRequest(BaseModel):
     ticket_code: str
+    length_cm: float  # 取件申报衣长（厘米），必填，与工单核对
 
 
 class OccupancySeg(BaseModel):

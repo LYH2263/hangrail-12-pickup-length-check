@@ -105,6 +105,9 @@ def hang(body: HangRequest, db: Session = Depends(get_db)):
     raise HTTPException(409, "挂杆空间不足")
 
 
+PICKUP_LENGTH_TOLERANCE_CM = 0.5
+
+
 @api_router.post("/pickup", response_model=OrderOut)
 def pickup(body: PickupRequest, db: Session = Depends(get_db)):
     order = db.scalar(select(WorkOrder).where(WorkOrder.ticket_code == body.ticket_code))
@@ -112,6 +115,8 @@ def pickup(body: PickupRequest, db: Session = Depends(get_db)):
         raise HTTPException(404, "取件码无效")
     if order.status != "hung":
         raise HTTPException(400, "工单未在挂杆上")
+    if abs(order.length_cm - body.length_cm) > PICKUP_LENGTH_TOLERANCE_CM:
+        raise HTTPException(400, "申报衣长与工单不符，拒绝取件")
     placements = db.scalars(
         select(RailPlacement).where(RailPlacement.order_id == order.id, RailPlacement.active == 1)
     ).all()
